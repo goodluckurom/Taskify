@@ -1,0 +1,1 @@
+* Add url emcoded to the auth pages to push the emails to the params then fetch it in the page that it is being needed: push email to params on redirect to the verify email page then fetch the email from the params and place in the input for verification
