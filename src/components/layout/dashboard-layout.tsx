@@ -17,7 +17,9 @@ export default function DashboardLayout({
   const { sidebarCollapsed, isMobile } = useDashboard();
 
   // Define the prefix where you don't want the layout
-  const hideLayout = pathname.startsWith("/dashboard/project");
+  const hideLayout =
+    pathname.startsWith("/dashboard/project") &&
+    pathname !== "/dashboard/projects";
 
   if (hideLayout) {
     return <>{children}</>;

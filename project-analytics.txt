@@ -1,0 +1,77 @@
+x`Project Analytics Page - Features & API/Data Requirements
+========================================================
+
+FEATURES TO IMPLEMENT:
+----------------------
+
+1. Project Overview Metrics
+   - Total Tasks: Number of tasks in the project.
+   - Completed Tasks: Number and percentage of completed tasks.
+   - Overdue Tasks: Number of tasks past their due date.
+   - Active Members: Number of users who have interacted with the project in the last X days.
+   - Upcoming Deadlines: List or count of tasks due in the next 7 days.
+
+2. Task Progress & Trends
+   - Burndown Chart: Visualize remaining tasks over time (great for sprints/agile).
+   - Task Completion Rate: How many tasks are completed per week/month.
+   - Average Task Completion Time: From creation to completion.
+   - Task Distribution: Pie/bar chart showing tasks by status (To Do, In Progress, Done, Blocked, etc.).
+
+3. Team & Member Analytics
+   - Top Contributors: Who completed the most tasks.
+   - Task Assignment Load: How tasks are distributed among team members.
+
+4. Export & Sharing
+   - Downloadable Reports: PDF/CSV export of analytics.
+   - Shareable Dashboards: For stakeholders or clients.
+
+
+API ENDPOINTS / DATA NEEDED:
+----------------------------
+
+To enable all the above analytics, the frontend needs to fetch the following data (ideally via one or more endpoints):
+
+1. **Tasks Data**
+   - Endpoint: `/api/projects/:projectId/tasks`
+   - Returns: Array of all tasks for the project, each with:
+     - `id`
+     - `title`
+     - `status` (e.g., todo, in_progress, done, blocked)
+     - `assigneeId`
+     - `createdAt`
+     - `completedAt`
+     - `dueDate`
+     - `updatedAt`
+     - `isBlocked` (optional)
+
+2. **Users/Members Data**
+   - Endpoint: `/api/projects/:projectId/members`
+   - Returns: Array of all project members, each with:
+     - `id`
+     - `name`
+     - `avatarUrl`
+     - `lastActiveAt` (for "active members" metric)
+
+3. **Comments/Activity Data** (for active members, collaboration, etc.)
+   - Endpoint: `/api/projects/:projectId/comments`
+   - Returns: Array of all comments, each with:
+     - `id`
+     - `taskId`
+     - `authorId`
+     - `createdAt`
+
+4. **(Optional) Pre-aggregated Analytics**
+   - For large projects, consider endpoints like:
+     - `/api/projects/:projectId/analytics/overview`
+     - `/api/projects/:projectId/analytics/burndown`
+     - `/api/projects/:projectId/analytics/completion-rate`
+   - These can return precomputed stats for performance.
+
+
+**Note:**
+- If the above endpoints return all relevant data, the frontend can compute and visualize all analytics features listed.
+- For very large projects, consider paginating or filtering data, or providing pre-aggregated endpoints. 
+
+
+
+

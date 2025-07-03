@@ -7,10 +7,24 @@ import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { useDashboard } from "@/context/dashboard-context";
 
+// Helper to detect tablet
+function useIsTablet() {
+  const [isTablet, setIsTablet] = useState(false);
+  useEffect(() => {
+    const check = () =>
+      setIsTablet(window.innerWidth >= 640 && window.innerWidth < 1024);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  return isTablet;
+}
+
 export default function DashboardNavbar() {
   const { isMobile, sidebarCollapsed } = useDashboard();
   const { theme, setTheme } = useTheme();
   const [time, setTime] = useState(new Date());
+  const isTablet = useIsTablet();
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -25,8 +39,10 @@ export default function DashboardNavbar() {
   });
 
   // Sidebar left position for header
-  const sidebarLeft =
-    !isMobile && sidebarCollapsed ? "lg:left-20" : "lg:left-64";
+  let sidebarLeft = "left-0";
+  if (!isMobile && !isTablet)
+    sidebarLeft += sidebarCollapsed ? " lg:left-20" : " lg:left-64";
+  else if (isTablet) sidebarLeft += " md:left-0";
 
   return (
     <header
@@ -43,8 +59,8 @@ export default function DashboardNavbar() {
           <Bell className="h-5 w-5 text-muted-foreground" />
           <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500" />
         </Button>
-        {/* Mobile only: Avatar & Theme Toggle */}
-        {isMobile && (
+        {/* Mobile & Tablet: Avatar & Theme Toggle */}
+        {(isMobile || isTablet) && (
           <>
             <Button
               variant="ghost"

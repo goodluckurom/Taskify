@@ -1,4 +1,5 @@
 import { CalendarClock, CheckCircle2, Star } from "lucide-react";
+import Link from "next/link";
 
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
@@ -49,8 +50,13 @@ export function ProjectCard({ project }: ProjectCardProps) {
       </div>
 
       {/* Project Title */}
-      <h3 className="mt-5 truncate text-base font-semibold text-foreground group-hover:text-primary">
-        {project.name}
+      <h3 className="mt-5 truncate text-base font-semibold">
+        <Link
+          href={`/dashboard/project/${project.id}`}
+          className="text-foreground hover:text-primary transition-colors underline-offset-2 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
+        >
+          {project.name}
+        </Link>
       </h3>
 
       {/* Description */}
