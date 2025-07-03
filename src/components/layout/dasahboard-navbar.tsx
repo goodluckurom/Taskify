@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { useDashboard } from "@/context/dashboard-context";
 
 export default function DashboardNavbar() {
-  const { isMobile } = useDashboard();
+  const { isMobile, sidebarCollapsed } = useDashboard();
   const { theme, setTheme } = useTheme();
   const [time, setTime] = useState(new Date());
 
@@ -24,22 +24,25 @@ export default function DashboardNavbar() {
     second: "2-digit",
   });
 
+  // Sidebar left position for header
+  const sidebarLeft =
+    !isMobile && sidebarCollapsed ? "lg:left-20" : "lg:left-64";
+
   return (
-    <header className="fixed top-0 left-0 w-full z-30 flex h-16 items-center justify-between border-b border-border bg-white/60 dark:bg-white/5 backdrop-blur-md px-4 sm:px-6 lg:px-8">
+    <header
+      className={`fixed top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-white/60 dark:bg-white/5 backdrop-blur-md px-4 sm:px-6 lg:px-8 transition-all duration-300 ease-in-out right-0 ${sidebarLeft}`}
+    >
       {/* Left Section */}
       <div className="flex flex-col">
         <span className="text-sm font-medium">{greeting}, David 👋</span>
-
         <span className="text-xs text-muted-foreground">{timeString}</span>
       </div>
-
       {/* Right Section */}
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5 text-muted-foreground" />
           <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500" />
         </Button>
-
         {/* Mobile only: Avatar & Theme Toggle */}
         {isMobile && (
           <>
@@ -54,7 +57,6 @@ export default function DashboardNavbar() {
                 <Moon className="h-5 w-5" />
               )}
             </Button>
-
             <Avatar className="h-8 w-8">
               <AvatarImage src="/placeholder-user.jpg" alt="User" />
               <AvatarFallback>PM</AvatarFallback>

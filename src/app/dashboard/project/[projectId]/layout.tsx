@@ -64,7 +64,7 @@ function InnerLayout({
 
         {/* Main */}
         <main
-          className={`flex-1 overflow-y-auto bg-muted/30 p-4 pb-24 sm:p-6 sm:pb-24 md:pb-24 lg:pb-6 lg:p-8 transition-all duration-300 ease-in-out lg:${sidebarMargin} pt-16`}
+          className={`flex-1 overflow-y-auto bg-muted/30 p-4 pb-24 sm:p-6 sm:pb-24 md:pb-24 lg:pb-6 lg:p-8 transition-all duration-300 ease-in-out lg:${sidebarMargin} mt-16`}
         >
           {children}
         </main>
