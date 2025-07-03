@@ -27,22 +27,24 @@ export function ProjectCard({ project }: ProjectCardProps) {
           </button>
 
           {/* Avatars */}
-          <div className="flex -space-x-2">
-            {project.members.slice(0, 3).map((member, i) => (
-              <div
-                key={i}
-                className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-background bg-background text-xs font-medium text-foreground"
-                title={member.name}
-              >
-                {member.name.charAt(0)}
-              </div>
-            ))}
-            {project.members.length > 3 && (
-              <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-background bg-muted text-xs font-medium text-foreground">
-                +{project.members.length - 3}
-              </div>
-            )}
-          </div>
+          {project.members && (
+            <div className="flex -space-x-2">
+              {project.members.slice(0, 3).map((member, i) => (
+                <div
+                  key={i}
+                  className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-background bg-background text-xs font-medium text-foreground"
+                  title={member.name}
+                >
+                  {member.name.charAt(0)}
+                </div>
+              ))}
+              {project.members.length > 3 && (
+                <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-background bg-muted text-xs font-medium text-foreground">
+                  +{project.members.length - 3}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -57,27 +59,31 @@ export function ProjectCard({ project }: ProjectCardProps) {
       </p>
 
       {/* Progress */}
-      <div className="mt-4">
-        <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
-          <span>Progress</span>
-          <span className="font-medium text-foreground">
-            {project.stats.completionPercentage}%
-          </span>
+      {project.stats && (
+        <div className="mt-4">
+          <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+            <span>Progress</span>
+            <span className="font-medium text-foreground">
+              {project.stats.completionPercentage}%
+            </span>
+          </div>
+          <Progress
+            value={project.stats.completionPercentage}
+            className="h-1.5 bg-muted"
+          />
         </div>
-        <Progress
-          value={project.stats.completionPercentage}
-          className="h-1.5 bg-muted"
-        />
-      </div>
+      )}
 
       {/* Footer */}
       <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
-        <div className="flex items-center gap-1">
-          <CheckCircle2 className="h-3.5 w-3.5" />
-          <span>
-            {project.stats.completedTasks}/{project.stats.totalTasks} tasks
-          </span>
-        </div>
+        {project.stats && (
+          <div className="flex items-center gap-1">
+            <CheckCircle2 className="h-3.5 w-3.5" />
+            <span>
+              {project.stats.completedTasks}/{project.stats.totalTasks} tasks
+            </span>
+          </div>
+        )}
         <div className="flex items-center gap-1">
           <CalendarClock className="h-3.5 w-3.5" />
           <span>Due {project.dueDate}</span>

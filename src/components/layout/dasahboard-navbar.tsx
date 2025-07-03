@@ -25,7 +25,7 @@ export default function DashboardNavbar() {
   });
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-white/60 dark:bg-white/5 backdrop-blur-md px-4 sm:px-6 lg:px-8">
+    <header className="fixed top-0 left-0 w-full z-30 flex h-16 items-center justify-between border-b border-border bg-white/60 dark:bg-white/5 backdrop-blur-md px-4 sm:px-6 lg:px-8">
       {/* Left Section */}
       <div className="flex flex-col">
         <span className="text-sm font-medium">{greeting}, David 👋</span>

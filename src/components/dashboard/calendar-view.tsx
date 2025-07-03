@@ -159,7 +159,7 @@ export function CalendarView({
                     <div className="space-y-1">
                       {day.tasks.map((task) => (
                         <Link
-                          href={`/dashboard/project/${projectId}/tasks`}
+                          href={`/dashboard/project/${projectId}/task/${task.id}`}
                           key={task.id}
                           className={cn(
                             "block truncate rounded px-1.5 py-1 text-xs",

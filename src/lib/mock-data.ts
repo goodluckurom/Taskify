@@ -48,6 +48,35 @@ export interface Task {
   assignee?: {
     name: string;
   };
+  // New fields for task details
+  created_at: string;
+  updated_at: string;
+  comments: TaskComment[];
+  files: TaskFile[];
+}
+
+export interface TaskComment {
+  id: string;
+  taskId: string;
+  author: {
+    name: string;
+    role: "project_owner" | "assignee" | "spectator";
+    avatar?: string;
+  };
+  content: string;
+  created_at: string;
+  updated_at?: string;
+}
+
+export interface TaskFile {
+  id: string;
+  taskId: string;
+  name: string;
+  size: string;
+  type: string;
+  url: string;
+  uploaded_by: string;
+  uploaded_at: string;
 }
 
 export interface Activity {
@@ -714,6 +743,65 @@ export const mockTasks: Task[] = [
     assignee: {
       name: "Sarah Johnson",
     },
+    created_at: "2023-01-15T09:30:00Z",
+    updated_at: "2023-11-27T14:45:00Z",
+    comments: [
+      {
+        id: "comment-1",
+        taskId: "task-1",
+        author: {
+          name: "John Doe",
+          role: "project_owner",
+        },
+        content:
+          "Great work on the wireframes! The layout looks clean and user-friendly. Can we add a call-to-action section in the hero area?",
+        created_at: "2023-11-25T10:30:00Z",
+      },
+      {
+        id: "comment-2",
+        taskId: "task-1",
+        author: {
+          name: "Sarah Johnson",
+          role: "assignee",
+        },
+        content:
+          "Thanks! I've added the CTA section as requested. The wireframes are now ready for review.",
+        created_at: "2023-11-26T14:20:00Z",
+      },
+      {
+        id: "comment-3",
+        taskId: "task-1",
+        author: {
+          name: "Michael Brown",
+          role: "spectator",
+        },
+        content:
+          "The navigation flow looks intuitive. Should we consider adding breadcrumbs for better UX?",
+        created_at: "2023-11-27T09:15:00Z",
+      },
+    ],
+    files: [
+      {
+        id: "file-1",
+        taskId: "task-1",
+        name: "homepage-wireframes.fig",
+        size: "2.4 MB",
+        type: "figma",
+        url: "#",
+        uploaded_by: "Sarah Johnson",
+        uploaded_at: "2023-11-26T16:45:00Z",
+      },
+      {
+        id: "file-2",
+        taskId: "task-1",
+        name: "wireframe-specs.pdf",
+        size: "1.2 MB",
+        type: "pdf",
+        url: "#",
+        uploaded_by: "Sarah Johnson",
+        uploaded_at: "2023-11-26T17:30:00Z",
+      },
+    ],
   },
   {
     id: "task-2",
@@ -726,6 +814,10 @@ export const mockTasks: Task[] = [
     assignee: {
       name: "Michael Brown",
     },
+    created_at: "2023-03-10T11:15:00Z",
+    updated_at: "2023-11-27T16:20:00Z",
+    comments: [],
+    files: [],
   },
   {
     id: "task-3",
@@ -738,6 +830,10 @@ export const mockTasks: Task[] = [
     assignee: {
       name: "Emily Davis",
     },
+    created_at: "2023-05-22T14:00:00Z",
+    updated_at: "2023-11-25T10:30:00Z",
+    comments: [],
+    files: [],
   },
   {
     id: "task-4",
@@ -750,6 +846,10 @@ export const mockTasks: Task[] = [
     assignee: {
       name: "Sarah Johnson",
     },
+    created_at: "2023-06-05T13:45:00Z",
+    updated_at: "2023-11-26T09:15:00Z",
+    comments: [],
+    files: [],
   },
   {
     id: "task-5",
@@ -762,6 +862,10 @@ export const mockTasks: Task[] = [
     assignee: {
       name: "John Doe",
     },
+    created_at: "2023-02-18T08:00:00Z",
+    updated_at: "2023-11-27T11:30:00Z",
+    comments: [],
+    files: [],
   },
   {
     id: "task-6",
@@ -774,6 +878,10 @@ export const mockTasks: Task[] = [
     assignee: {
       name: "Michael Brown",
     },
+    created_at: "2023-04-10T10:20:00Z",
+    updated_at: "2023-11-24T15:10:00Z",
+    comments: [],
+    files: [],
   },
   {
     id: "task-7",
@@ -783,6 +891,10 @@ export const mockTasks: Task[] = [
     status: "todo",
     priority: "high",
     dueDate: "Nov 28",
+    created_at: "2023-01-15T09:30:00Z",
+    updated_at: "2023-11-27T14:45:00Z",
+    comments: [],
+    files: [],
   },
   {
     id: "task-8",
@@ -795,6 +907,10 @@ export const mockTasks: Task[] = [
     assignee: {
       name: "Lisa Chen",
     },
+    created_at: "2023-03-10T11:15:00Z",
+    updated_at: "2023-11-27T16:20:00Z",
+    comments: [],
+    files: [],
   },
   {
     id: "task-9",
@@ -807,6 +923,10 @@ export const mockTasks: Task[] = [
     assignee: {
       name: "Alex Wilson",
     },
+    created_at: "2023-05-22T14:00:00Z",
+    updated_at: "2023-11-25T10:30:00Z",
+    comments: [],
+    files: [],
   },
   {
     id: "task-10",
@@ -819,6 +939,10 @@ export const mockTasks: Task[] = [
     assignee: {
       name: "John Doe",
     },
+    created_at: "2023-04-10T10:20:00Z",
+    updated_at: "2023-11-24T15:10:00Z",
+    comments: [],
+    files: [],
   },
   {
     id: "task-11",
@@ -831,6 +955,10 @@ export const mockTasks: Task[] = [
     assignee: {
       name: "Emma Thompson",
     },
+    created_at: "2023-10-01T09:00:00Z",
+    updated_at: "2023-11-27T12:45:00Z",
+    comments: [],
+    files: [],
   },
   {
     id: "task-12",
@@ -843,6 +971,10 @@ export const mockTasks: Task[] = [
     assignee: {
       name: "Sophia Garcia",
     },
+    created_at: "2023-01-30T11:00:00Z",
+    updated_at: "2023-11-25T14:20:00Z",
+    comments: [],
+    files: [],
   },
   {
     id: "task-13",
@@ -855,6 +987,10 @@ export const mockTasks: Task[] = [
     assignee: {
       name: "Robert Taylor",
     },
+    created_at: "2023-06-05T13:45:00Z",
+    updated_at: "2023-11-26T09:15:00Z",
+    comments: [],
+    files: [],
   },
   {
     id: "task-14",
@@ -867,6 +1003,10 @@ export const mockTasks: Task[] = [
     assignee: {
       name: "Olivia Martin",
     },
+    created_at: "2023-02-18T08:00:00Z",
+    updated_at: "2023-11-27T11:30:00Z",
+    comments: [],
+    files: [],
   },
 ];
 
@@ -947,5 +1087,140 @@ export const mockActivities: Activity[] = [
     action: "completed",
     target: "Analyze competitor features",
     time: "Yesterday at 4:30 PM",
+  },
+];
+
+export const mockUnassignedTasks: Task[] = [
+  {
+    id: "unassigned-1",
+    projectId: "project-1",
+    title: "Review and optimize database queries",
+    description:
+      "Analyze current database queries and optimize them for better performance. Focus on the user authentication and project data retrieval endpoints.",
+    status: "todo",
+    priority: "high",
+    dueDate: "Dec 5",
+    created_at: "2023-11-25T10:30:00Z",
+    updated_at: "2023-11-27T14:45:00Z",
+    comments: [
+      {
+        id: "comment-un-1",
+        taskId: "unassigned-1",
+        author: {
+          name: "John Doe",
+          role: "project_owner",
+        },
+        content:
+          "This is a critical task for improving our app performance. Looking for someone with database optimization experience.",
+        created_at: "2023-11-25T10:30:00Z",
+      },
+    ],
+    files: [],
+  },
+  {
+    id: "unassigned-2",
+    projectId: "project-1",
+    title: "Create user onboarding tutorial",
+    description:
+      "Design and implement an interactive tutorial that guides new users through the main features of the application.",
+    status: "todo",
+    priority: "medium",
+    dueDate: "Dec 10",
+    created_at: "2023-11-26T09:15:00Z",
+    updated_at: "2023-11-27T16:20:00Z",
+    comments: [
+      {
+        id: "comment-un-2",
+        taskId: "unassigned-2",
+        author: {
+          name: "Sarah Johnson",
+          role: "spectator",
+        },
+        content:
+          "This would be great for improving user retention. I can help with the UX design if needed.",
+        created_at: "2023-11-26T09:15:00Z",
+      },
+    ],
+    files: [],
+  },
+  {
+    id: "unassigned-3",
+    projectId: "project-2",
+    title: "Implement push notifications",
+    description:
+      "Add push notification functionality for task updates, deadlines, and team mentions. Support both iOS and Android platforms.",
+    status: "todo",
+    priority: "high",
+    dueDate: "Dec 15",
+    created_at: "2023-11-27T11:00:00Z",
+    updated_at: "2023-11-27T11:00:00Z",
+    comments: [],
+    files: [],
+  },
+  {
+    id: "unassigned-4",
+    projectId: "project-2",
+    title: "Write API documentation",
+    description:
+      "Create comprehensive API documentation with examples, error codes, and integration guides for external developers.",
+    status: "todo",
+    priority: "medium",
+    dueDate: "Dec 20",
+    created_at: "2023-11-28T14:30:00Z",
+    updated_at: "2023-11-28T14:30:00Z",
+    comments: [
+      {
+        id: "comment-un-4",
+        taskId: "unassigned-4",
+        author: {
+          name: "Alex Wilson",
+          role: "spectator",
+        },
+        content:
+          "I have experience with OpenAPI/Swagger documentation. This would be perfect for me!",
+        created_at: "2023-11-28T14:30:00Z",
+      },
+    ],
+    files: [],
+  },
+  {
+    id: "unassigned-5",
+    projectId: "project-3",
+    title: "Design email templates",
+    description:
+      "Create professional email templates for notifications, invitations, and weekly reports. Ensure they work well across all email clients.",
+    status: "todo",
+    priority: "low",
+    dueDate: "Dec 25",
+    created_at: "2023-11-29T08:45:00Z",
+    updated_at: "2023-11-29T08:45:00Z",
+    comments: [],
+    files: [],
+  },
+  {
+    id: "unassigned-6",
+    projectId: "project-1",
+    title: "Set up automated testing pipeline",
+    description:
+      "Configure CI/CD pipeline with automated testing for unit tests, integration tests, and end-to-end tests. Include code coverage reporting.",
+    status: "todo",
+    priority: "high",
+    dueDate: "Dec 8",
+    created_at: "2023-11-30T13:20:00Z",
+    updated_at: "2023-11-30T13:20:00Z",
+    comments: [
+      {
+        id: "comment-un-6",
+        taskId: "unassigned-6",
+        author: {
+          name: "Michael Brown",
+          role: "spectator",
+        },
+        content:
+          "This is crucial for maintaining code quality. I can help set up GitHub Actions if needed.",
+        created_at: "2023-11-30T13:20:00Z",
+      },
+    ],
+    files: [],
   },
 ];

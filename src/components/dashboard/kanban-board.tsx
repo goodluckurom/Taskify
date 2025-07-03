@@ -8,11 +8,12 @@ import {
   type DropResult,
 } from "@hello-pangea/dnd";
 import { CheckCircle2, Clock, MoreHorizontal, Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {  CardContent} from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -93,6 +94,16 @@ export function KanbanBoard({
     },
   });
 
+  // Add a type-safe mapping for status
+  const statusMap = {
+    todo: "todo",
+    "in-progress": "in-progress",
+    review: "review",
+    completed: "completed",
+  } as const;
+
+  const router = useRouter();
+
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
 
@@ -120,8 +131,10 @@ export function KanbanBoard({
       const destItems = [...destColumn.items];
       const [removed] = sourceItems.splice(source.index, 1);
 
-      // Update the task status to match the new column
-      const updatedTask = { ...removed, status: destination.droppableId };
+      // Type-safe status update
+      const newStatus =
+        statusMap[destination.droppableId as keyof typeof statusMap];
+      const updatedTask: Task = { ...removed, status: newStatus };
 
       destItems.splice(destination.index, 0, updatedTask);
 
@@ -136,6 +149,12 @@ export function KanbanBoard({
           items: destItems,
         },
       });
+
+      // Here you can add an API call to update the task status in the backend
+      // Example:
+      // updateTaskStatus(updatedTask.id, newStatus)
+      //   .then(() => toast.success("Task status updated!"))
+      //   .catch(() => toast.error("Failed to update task status"));
 
       toast("Task Updated", {
         description: `"${removed.title}" moved to ${destColumn.title}`,
@@ -184,52 +203,56 @@ export function KanbanBoard({
                           index={index}
                         >
                           {(provided, snapshot) => (
-                            <Card
+                            <div
                               ref={provided.innerRef}
                               {...provided.draggableProps}
-                              {...provided.dragHandleProps}
                               className={cn(
-                                "cursor-grab shadow-sm",
-                                snapshot.isDragging && "shadow-md"
+                                "bg-background rounded-lg shadow-sm border p-3 flex flex-col gap-2 cursor-pointer group hover:bg-muted/50 transition-colors",
+                                snapshot.isDragging && "ring-2 ring-primary"
                               )}
+                              onClick={() =>
+                                router.push(
+                                  `/dashboard/project/${projectId}/task/${task.id}`
+                                )
+                              }
                             >
-                              <CardHeader className="p-3 pb-0">
-                                <div className="flex items-start justify-between">
-                                  <CardTitle className="text-sm font-medium">
-                                    {task.title}
-                                  </CardTitle>
-                                  <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-7 w-7"
-                                      >
-                                        <MoreHorizontal className="h-4 w-4" />
-                                        <span className="sr-only">
-                                          Open menu
-                                        </span>
-                                      </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end">
-                                      <DropdownMenuLabel>
-                                        Actions
-                                      </DropdownMenuLabel>
-                                      <DropdownMenuSeparator />
-                                      <DropdownMenuItem>
-                                        Edit Task
-                                      </DropdownMenuItem>
-                                      <DropdownMenuItem>
-                                        Change Assignee
-                                      </DropdownMenuItem>
-                                      <DropdownMenuSeparator />
-                                      <DropdownMenuItem className="text-destructive">
-                                        Delete Task
-                                      </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                  </DropdownMenu>
-                                </div>
-                              </CardHeader>
+                              <div className="flex items-center justify-between">
+                                <span
+                                  {...provided.dragHandleProps}
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="cursor-grab"
+                                >
+                                  <span className="sr-only">Drag</span>
+                                </span>
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-8 w-8"
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      <MoreHorizontal className="h-4 w-4" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end">
+                                    <DropdownMenuLabel>
+                                      Actions
+                                    </DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem>
+                                      Edit Task
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                      Change Assignee
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem className="text-destructive">
+                                      Delete Task
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </div>
                               <CardContent className="p-3">
                                 <div className="flex flex-wrap items-center gap-2 text-xs">
                                   <Badge
@@ -260,7 +283,7 @@ export function KanbanBoard({
                                   </div>
                                 )}
                               </CardContent>
-                            </Card>
+                            </div>
                           )}
                         </Draggable>
                       ))

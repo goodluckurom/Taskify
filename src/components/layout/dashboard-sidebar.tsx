@@ -6,12 +6,9 @@ import { cn } from "@/lib/utils";
 import {
   Calendar,
   CheckCircle,
-  ChevronLeft,
   ChevronRight,
   ClipboardList,
-  Cog,
   Home,
-  LogOut,
   MessageSquare,
   Moon,
   Sun,
@@ -62,19 +59,6 @@ export default function DashboardSidebar() {
     },
   ];
 
-  const bottomNavItems = [
-    {
-      title: "Settings",
-      href: "/dashboard/settings",
-      icon: Cog,
-    },
-    {
-      title: "Logout",
-      href: "/logout",
-      icon: LogOut,
-    },
-  ];
-
   return (
     <div
       className={cn(
@@ -82,7 +66,7 @@ export default function DashboardSidebar() {
         sidebarCollapsed ? "w-20" : "w-64"
       )}
     >
-      <div className="flex h-16 items-center justify-between border-b px-6">
+      <div className="flex h-16 items-center border-b px-6">
         {!sidebarCollapsed && (
           <div className="flex items-center">
             <Logo className="h-10 w-10 text-blue-600" />
@@ -94,18 +78,6 @@ export default function DashboardSidebar() {
             <Logo className="h-10 w-10 text-blue-600" />
           </div>
         )}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={toggleSidebar}
-          className="rounded-full"
-        >
-          {sidebarCollapsed ? (
-            <ChevronRight className="h-4 w-4" />
-          ) : (
-            <ChevronLeft className="h-4 w-4" />
-          )}
-        </Button>
       </div>
 
       <ScrollArea className="flex-1 px-3 py-2">
@@ -123,7 +95,25 @@ export default function DashboardSidebar() {
           ))}
         </div>
       </ScrollArea>
-      <div className="mt-auto border-t px-4 py-3">
+      <div className="mt-auto border-t px-4 py-3 relative">
+        <button
+          onClick={toggleSidebar}
+          aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          className="absolute -top-7 right-2 z-30 flex items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-500 text-white shadow-lg transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-400 w-12 h-12"
+          style={{ boxShadow: "0 4px 24px 0 rgba(80, 80, 200, 0.15)" }}
+        >
+          <span className="sr-only">
+            {sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          </span>
+          <span
+            className="transition-transform duration-300"
+            style={{
+              transform: sidebarCollapsed ? "rotate(180deg)" : "rotate(0deg)",
+            }}
+          >
+            <ChevronRight className="h-6 w-6" />
+          </span>
+        </button>
         {!sidebarCollapsed ? (
           <div className="flex items-center gap-3">
             <Avatar className="h-9 w-9">
