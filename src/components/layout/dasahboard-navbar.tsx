@@ -1,9 +1,8 @@
 "use client";
 
-import { Bell, Sun, Moon } from "lucide-react";
+import { Bell } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { useDashboard } from "@/context/dashboard-context";
 
@@ -22,7 +21,6 @@ function useIsTablet() {
 
 export default function DashboardNavbar() {
   const { isMobile, sidebarCollapsed } = useDashboard();
-  const { theme, setTheme } = useTheme();
   const [time, setTime] = useState(new Date());
   const isTablet = useIsTablet();
 
@@ -59,25 +57,12 @@ export default function DashboardNavbar() {
           <Bell className="h-5 w-5 text-muted-foreground" />
           <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500" />
         </Button>
-        {/* Mobile & Tablet: Avatar & Theme Toggle */}
+        {/* Mobile & Tablet: Avatar */}
         {(isMobile || isTablet) && (
-          <>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            >
-              {theme === "dark" ? (
-                <Sun className="h-5 w-5" />
-              ) : (
-                <Moon className="h-5 w-5" />
-              )}
-            </Button>
-            <Avatar className="h-8 w-8">
-              <AvatarImage src="/placeholder-user.jpg" alt="User" />
-              <AvatarFallback>PM</AvatarFallback>
-            </Avatar>
-          </>
+          <Avatar className="h-8 w-8">
+            <AvatarImage src="/placeholder-user.jpg" alt="User" />
+            <AvatarFallback>PM</AvatarFallback>
+          </Avatar>
         )}
       </div>
     </header>

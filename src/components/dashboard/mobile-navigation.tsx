@@ -3,13 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import {
-  Home,
-  ClipboardList,
-  CheckCircle,
-  MessageSquare,
-  User,
-} from "lucide-react";
+import { Home, ClipboardList, Calendar, Settings } from "lucide-react";
 
 interface MobileNavigationProps {
   className?: string;
@@ -20,35 +14,30 @@ export default function MobileNavigation({ className }: MobileNavigationProps) {
 
   const navItems = [
     {
-      name: "Home",
+      title: "Dashboard",
       href: "/dashboard",
       icon: Home,
     },
     {
-      name: "Projects",
+      title: "Projects",
       href: "/dashboard/projects",
       icon: ClipboardList,
     },
     {
-      name: "Tasks",
-      href: "/dashboard/tasks",
-      icon: CheckCircle,
+      title: "Calendar",
+      href: "/dashboard/calendar",
+      icon: Calendar,
     },
     {
-      name: "Chat",
-      href: "/dashboard/chat",
-      icon: MessageSquare,
-    },
-    {
-      name: "Profile",
-      href: "/dashboard/profile",
-      icon: User,
+      title: "Settings",
+      href: "/dashboard/settings",
+      icon: Settings,
     },
   ];
 
   return (
-    <div className={cn("bg-background border-t", className)}>
-      <div className="grid h-16 grid-cols-5">
+    <div className={cn("bg-app-gradient border-t", className)}>
+      <div className="grid h-16 grid-cols-4">
         {navItems.map((item) => {
           const isActive =
             pathname === item.href ||
@@ -65,7 +54,7 @@ export default function MobileNavigation({ className }: MobileNavigationProps) {
               <item.icon
                 className={cn("h-5 w-5", isActive && "text-primary")}
               />
-              <span className="text-xs">{item.name}</span>
+              <span className="text-xs">{item.title}</span>
             </Link>
           );
         })}

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import {
   Calendar,
+  ChevronLeft,
   ChevronRight,
   ClipboardList,
   Home,
@@ -45,32 +46,28 @@ export default function DashboardSidebar() {
   return (
     <div
       className={cn(
-        "fixed inset-y-0 left-0 z-20 hidden lg:flex flex-col border-r shadow-xl transition-all duration-300 ease-in-out bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 backdrop-blur-md",
+        "fixed inset-y-0 left-0 z-20 hidden lg:flex flex-col border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-300 ease-in-out",
         sidebarCollapsed ? "w-20" : "w-64"
       )}
     >
       {/* Logo/Branding */}
       <div
         className={cn(
-          "flex h-16 items-center border-b shrink-0",
-          sidebarCollapsed ? "justify-center px-4" : "px-6"
+          "flex h-16 items-center border-b shrink-0 px-4",
+          sidebarCollapsed ? "justify-center" : "px-6"
         )}
       >
-        {!sidebarCollapsed ? (
-          <div className="flex items-center gap-2">
-            <Logo className="h-8 w-8 text-blue-600 shrink-0" />
-            <span className="text-lg font-semibold tracking-wide truncate">
-              Taskify
-            </span>
-          </div>
-        ) : (
-          <Logo className="h-8 w-8 text-blue-600" />
-        )}
+        <Link href="/dashboard" className="flex items-center gap-2 w-full">
+          <Logo className="h-8 w-8 text-primary" />
+          {!sidebarCollapsed && (
+            <span className="text-lg font-semibold">Taskify</span>
+          )}
+        </Link>
       </div>
 
       {/* Navigation */}
       <ScrollArea className="flex-1 py-4">
-        <div className={cn("space-y-2", sidebarCollapsed ? "px-2" : "px-4")}>
+        <div className={cn("space-y-1", sidebarCollapsed ? "px-2" : "px-3")}>
           {mainNavItems.map((item) => (
             <NavItem
               key={item.href}
@@ -88,13 +85,13 @@ export default function DashboardSidebar() {
       {/* User Info */}
       <div
         className={cn(
-          "mt-auto border-t shrink-0 py-4",
-          sidebarCollapsed ? "px-2" : "px-4"
+          "mt-auto border-t shrink-0 p-3",
+          sidebarCollapsed ? "px-2" : "px-3"
         )}
       >
         {!sidebarCollapsed ? (
-          <div className="flex items-center gap-3">
-            <Avatar className="h-10 w-10 shrink-0">
+          <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors">
+            <Avatar className="h-9 w-9 shrink-0">
               <AvatarImage src="/placeholder-user.jpg" />
               <AvatarFallback>PM</AvatarFallback>
             </Avatar>
@@ -109,7 +106,7 @@ export default function DashboardSidebar() {
           </div>
         ) : (
           <div className="flex justify-center">
-            <Avatar className="h-10 w-10">
+            <Avatar className="h-9 w-9">
               <AvatarImage src="/placeholder-user.jpg" />
               <AvatarFallback>PM</AvatarFallback>
             </Avatar>
@@ -117,26 +114,33 @@ export default function DashboardSidebar() {
         )}
       </div>
 
-      {/* Collapse/Expand Button */}
-      <button
-        onClick={toggleSidebar}
-        aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-        className={cn(
-          "absolute top-1/2 -translate-y-1/2 flex items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-500 text-white shadow-lg transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-400 w-8 h-8 z-30",
-          sidebarCollapsed ? "-right-4" : "-right-4"
-        )}
-        style={{
-          boxShadow: "0 4px 24px 0 rgba(80, 80, 200, 0.15)",
-          right: "-16px",
-        }}
-      >
-        <ChevronRight
+      {/* Collapse Button */}
+      <div className="border-t p-3">
+        <button
+          onClick={toggleSidebar}
+          aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           className={cn(
-            "h-4 w-4 transition-transform duration-300",
-            sidebarCollapsed ? "rotate-0" : "rotate-180"
+            "flex items-center justify-center w-full rounded-lg p-2 transition-all hover:bg-muted/50",
+            sidebarCollapsed ? "mx-auto w-10" : "justify-between"
           )}
-        />
-      </button>
+        >
+          {!sidebarCollapsed && (
+            <span className="text-sm font-medium">Collapse</span>
+          )}
+          <span
+            className={cn(
+              "transition-transform duration-300",
+              sidebarCollapsed ? "rotate-180" : "rotate-0"
+            )}
+          >
+            {sidebarCollapsed ? (
+              <ChevronRight className="h-5 w-5" />
+            ) : (
+              <ChevronLeft className="h-5 w-5" />
+            )}
+          </span>
+        </button>
+      </div>
     </div>
   );
 }
@@ -152,39 +156,34 @@ function NavItem({
 }) {
   const Icon = item.icon;
 
-  if (collapsed) {
-    return (
-      <Link
-        href={item.href}
-        className={cn(
-          "flex h-12 w-12 mx-auto items-center justify-center rounded-lg transition-all duration-200 group relative",
-          isActive
-            ? "bg-primary text-white shadow-lg"
-            : "hover:bg-muted text-muted-foreground hover:text-primary"
-        )}
-        title={item.title}
-      >
-        <Icon className="h-5 w-5  " />
-        <span className="sr-only">{item.title}</span>
-      </Link>
-    );
-  }
-
   return (
     <Link
       href={item.href}
       className={cn(
-        "flex h-12 items-center gap-3 rounded-lg px-3 transition-all duration-200 group relative",
+        "flex items-center gap-3 rounded-lg p-3 transition-all group",
         isActive
-          ? "bg-primary text-white font-medium shadow-sm transition-all duration-200"
-          : "hover:bg-muted text-muted-foreground hover:text-primary"
+          ? "bg-primary text-white shadow-sm"
+          : "hover:bg-muted/50 text-muted-foreground hover:text-foreground",
+        collapsed ? "justify-center" : "px-4"
       )}
     >
-      <Icon className="h-5 w-5 shrink-0" />
-      <span className="truncate">{item.title}</span>
-      {isActive && (
-        <div className="absolute left-0 top-0 h-full w-1 bg-primary rounded-r-full" />
+      <Icon
+        className={cn(
+          "h-5 w-5 flex-shrink-0",
+          isActive ? "text-white" : "text-current"
+        )}
+      />
+      {!collapsed && (
+        <span
+          className={cn(
+            "text-sm font-medium transition-opacity",
+            isActive ? "text-white" : "text-current"
+          )}
+        >
+          {item.title}
+        </span>
       )}
+      {collapsed && <span className="sr-only">{item.title}</span>}
     </Link>
   );
 }
