@@ -176,7 +176,7 @@ function NavItem({
       className={cn(
         "flex h-12 items-center gap-3 rounded-lg px-3 transition-all duration-200 group relative",
         isActive
-          ? "bg-primary/10 text-white font-medium shadow-sm transition-all duration-200"
+          ? "bg-primary text-white font-medium shadow-sm transition-all duration-200"
           : "hover:bg-muted text-muted-foreground hover:text-primary"
       )}
     >

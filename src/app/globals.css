@@ -190,6 +190,11 @@
   }
 }
 
+.bg-app-gradient {
+  @apply bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950;
+}
+
+
 /* Floating background animation */
 @keyframes float-background {
   0%,
@@ -477,53 +482,56 @@
   }
 }
 
-/* For WebKit browsers (Chrome, Safari, Edge) */
+/* For WebKit browsers (Chrome, Edge, Safari) */
+/* Webkit (Chrome, Safari, Edge) */
 ::-webkit-scrollbar {
   width: 12px;
   height: 12px;
 }
 
+/* Light mode track */
 ::-webkit-scrollbar-track {
-  background: oklch(0.967 0.001 286.375); /* muted */
-  border: 1px solid oklch(0.92 0.004 286.32); /* border */
+  background: #fff;
+  border: 1px solid #e5e7eb;
   border-radius: 8px;
 }
 
+/* Light mode thumb */
 ::-webkit-scrollbar-thumb {
-  background: oklch(0.623 0.214 259.815); /* primary */
+  background: #2563eb;
   border-radius: 8px;
-  border: 2px solid oklch(0.967 0.001 286.375); /* track color */
+  border: 2px solid #fff;
   transition: background 0.3s ease;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: oklch(0.97 0.014 254.604); /* primary-foreground */
+  background: #1d4ed8;
 }
 
-/* For Firefox */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: oklch(0.623 0.214 259.815) oklch(0.967 0.001 286.375);
-}
-
+/* Dark mode overrides */
 .dark ::-webkit-scrollbar-track {
-  background: oklch(0.274 0.006 286.033); /* muted (dark) */
-  border: 1px solid oklch(1 0 0 / 10%); /* border (dark) */
+  background: #181c23;
+  border: 1px solid #23272f;
 }
-
 .dark ::-webkit-scrollbar-thumb {
-  background: oklch(0.546 0.245 262.881); /* primary (dark) */
-  border: 2px solid oklch(0.274 0.006 286.033);
+  background: #2563eb;
+  border: 2px solid #181c23;
 }
-
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: oklch(0.379 0.146 265.522); /* primary-foreground (dark) */
+  background: #1d4ed8;
 }
 
-/* Firefox Dark Mode */
-.dark * {
-  scrollbar-color: oklch(0.546 0.245 262.881) oklch(0.274 0.006 286.033);
+/* Firefox: Light mode */
+html:not(.dark) {
+  scrollbar-width: thin;
+  scrollbar-color: #2563eb #fff; /* thumb background / track background */
 }
+
+/* Firefox: Dark mode */
+html.dark {
+  scrollbar-width: thin;
+  scrollbar-color: #2563eb #181c23;
+}
+
 /* Example to hide the calendar icon and use your own (WebKit only) */
 input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer;

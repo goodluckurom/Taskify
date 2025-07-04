@@ -69,7 +69,7 @@ export default function ProjectsPage() {
   }, [tab, search, category, owner, minCompletion]);
 
   return (
-    <div className="max-w-6xl mx-auto py-8 px-2 md:px-6">
+    <div className="container py-8 md:py-2 lg:py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
         <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
           Projects

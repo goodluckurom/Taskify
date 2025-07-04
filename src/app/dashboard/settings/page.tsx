@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import {
   Bell,
-  Globe,
   Lock,
   Moon,
   Palette,
@@ -15,6 +14,9 @@ import {
   X,
   Check,
   Image as ImageIcon,
+  Laptop,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -60,7 +62,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   AlertDialog,
@@ -110,34 +111,40 @@ type PasswordFormValues = z.infer<typeof passwordSchema>;
 const SettingsSkeleton = () => (
   <div className="container py-6 md:py-8 lg:py-12">
     <div className="animate-pulse">
-      <div className="h-8 w-40 bg-muted rounded-lg mb-2" />
-      <div className="h-4 w-64 bg-muted rounded-lg" />
+      <div className="h-8 w-40 bg-gray-200 dark:bg-gray-700 rounded-lg mb-2" />
+      <div className="h-4 w-64 bg-gray-200 dark:bg-gray-700 rounded-lg" />
     </div>
     <div className="mt-8 flex flex-col md:flex-row md:space-x-8">
       <div className="md:w-1/4 space-y-2">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="h-10 w-full bg-muted rounded-lg" />
+          <div
+            key={i}
+            className="h-10 w-full bg-gray-200 dark:bg-gray-700 rounded-lg"
+          />
         ))}
       </div>
       <div className="flex-1 space-y-6">
         <div className="animate-pulse">
-          <div className="h-6 w-32 bg-muted rounded-lg mb-3" />
-          <div className="h-4 w-48 bg-muted rounded-lg mb-6" />
+          <div className="h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded-lg mb-3" />
+          <div className="h-4 w-48 bg-gray-200 dark:bg-gray-700 rounded-lg mb-6" />
           <div className="flex items-center space-x-6">
-            <div className="h-28 w-28 rounded-full bg-muted" />
+            <div className="h-28 w-28 rounded-full bg-gray-200 dark:bg-gray-700" />
             <div className="space-y-3">
-              <div className="h-9 w-36 bg-muted rounded-lg" />
-              <div className="h-9 w-28 bg-muted rounded-lg" />
+              <div className="h-9 w-36 bg-gray-200 dark:bg-gray-700 rounded-lg" />
+              <div className="h-9 w-28 bg-gray-200 dark:bg-gray-700 rounded-lg" />
             </div>
           </div>
-          <div className="h-px bg-muted my-6" />
+          <div className="h-px bg-gray-200 dark:bg-gray-700 my-6" />
           <div className="grid gap-6 sm:grid-cols-2">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-11 bg-muted rounded-lg" />
+              <div
+                key={i}
+                className="h-11 bg-gray-200 dark:bg-gray-700 rounded-lg"
+              />
             ))}
-            <div className="h-32 bg-muted rounded-lg sm:col-span-2" />
+            <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded-lg sm:col-span-2" />
           </div>
-          <div className="h-11 w-36 bg-muted rounded-lg mt-6 ml-auto" />
+          <div className="h-11 w-36 bg-gray-200 dark:bg-gray-700 rounded-lg mt-6 ml-auto" />
         </div>
       </div>
     </div>
@@ -157,6 +164,10 @@ export default function SettingsPage() {
   });
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Simulate initial loading
   useEffect(() => {
@@ -176,6 +187,8 @@ export default function SettingsPage() {
       language: "en",
     },
   });
+  const userEmail = profileForm.getValues("email") || "";
+  const [deleteConfirm, setDeleteConfirm] = useState("");
 
   // Password form
   const passwordForm = useForm<PasswordFormValues>({
@@ -262,8 +275,8 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="container py-8">
-      <div className="mb-20">
+    <div className="container py-8 md:py-2 lg:py-2">
+      <div className="mb-12">
         <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
           Account Settings
         </h1>
@@ -310,13 +323,19 @@ export default function SettingsPage() {
               ].map((tab) => (
                 <button
                   key={tab.value}
-                  onClick={() => setActiveTab(tab.value)} // You'll need to handle this state
+                  onClick={() => setActiveTab(tab.value)}
                   className={`
           flex items-center gap-3 w-full px-3 py-2 rounded-md text-left
           transition-colors duration-200
           ${
             activeTab === tab.value
-              ? "bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 text-white"
+              ? `
+                ${
+                  theme === "dark"
+                    ? "bg-gradient-to-br from-gray-900 to-gray-950 text-white transition-all duration-200"
+                    : "bg-blue-50 text-black"
+                }
+              `
               : "text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800"
           }
         `}
@@ -594,112 +613,201 @@ export default function SettingsPage() {
                           Last changed 3 months ago
                         </p>
                       </div>
-                      <Dialog
-                        open={showPasswordDialog}
-                        onOpenChange={setShowPasswordDialog}
+                      <AlertDialog
+                        open={showPasswordConfirm}
+                        onOpenChange={setShowPasswordConfirm}
                       >
-                        <DialogTrigger asChild>
+                        <AlertDialogTrigger asChild>
                           <Button variant="outline" size="sm">
                             Change Password
                           </Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-[425px]">
-                          <Form {...passwordForm}>
-                            <form
-                              onSubmit={passwordForm.handleSubmit(
-                                handlePasswordSubmit
-                              )}
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Change Password?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to change your password? You
+                              will need to enter your current password and set a
+                              new one.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => {
+                                setShowPasswordConfirm(false);
+                                setShowPasswordDialog(true);
+                              }}
+                              type="button"
                             >
-                              <DialogHeader>
-                                <DialogTitle className="text-2xl">
-                                  Change Password
-                                </DialogTitle>
-                                <DialogDescription>
-                                  Enter your current password and set a new one.
-                                </DialogDescription>
-                              </DialogHeader>
-                              <div className="grid gap-4 py-4">
-                                <FormField
-                                  control={passwordForm.control}
-                                  name="currentPassword"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Current Password</FormLabel>
-                                      <FormControl>
-                                        <Input
-                                          {...field}
-                                          type="password"
-                                          disabled={isSubmitting}
-                                          className="bg-background"
-                                        />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
-                                <FormField
-                                  control={passwordForm.control}
-                                  name="newPassword"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>New Password</FormLabel>
-                                      <FormControl>
-                                        <Input
-                                          {...field}
-                                          type="password"
-                                          disabled={isSubmitting}
-                                          className="bg-background"
-                                        />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
-                                <FormField
-                                  control={passwordForm.control}
-                                  name="confirmPassword"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Confirm Password</FormLabel>
-                                      <FormControl>
-                                        <Input
-                                          {...field}
-                                          type="password"
-                                          disabled={isSubmitting}
-                                          className="bg-background"
-                                        />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
-                              </div>
-                              <DialogFooter>
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  onClick={() => setShowPasswordDialog(false)}
-                                  disabled={isSubmitting}
-                                >
-                                  Cancel
-                                </Button>
-                                <Button type="submit" disabled={isSubmitting}>
-                                  {isSubmitting ? (
-                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                  ) : (
-                                    <Save className="h-4 w-4 mr-2" />
-                                  )}
-                                  Save Changes
-                                </Button>
-                              </DialogFooter>
-                            </form>
-                          </Form>
-                        </DialogContent>
-                      </Dialog>
+                              Continue
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Password Change Dialog */}
+              <Dialog
+                open={showPasswordDialog}
+                onOpenChange={setShowPasswordDialog}
+              >
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Change Password</DialogTitle>
+                    <DialogDescription>
+                      Enter your current password and choose a new one. Make
+                      sure to use a strong password.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <Form {...passwordForm}>
+                    <form
+                      onSubmit={passwordForm.handleSubmit(handlePasswordSubmit)}
+                      className="space-y-4"
+                    >
+                      <div className="space-y-4">
+                        <FormField
+                          control={passwordForm.control}
+                          name="currentPassword"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Current Password</FormLabel>
+                              <FormControl>
+                                <div className="relative">
+                                  <Input
+                                    {...field}
+                                    type={
+                                      showCurrentPassword ? "text" : "password"
+                                    }
+                                    placeholder="Enter your current password"
+                                    className="pr-10"
+                                  />
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                                    onClick={() =>
+                                      setShowCurrentPassword(
+                                        !showCurrentPassword
+                                      )
+                                    }
+                                  >
+                                    {showCurrentPassword ? (
+                                      <EyeOff className="h-4 w-4" />
+                                    ) : (
+                                      <Eye className="h-4 w-4" />
+                                    )}
+                                  </Button>
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={passwordForm.control}
+                          name="newPassword"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>New Password</FormLabel>
+                              <FormControl>
+                                <div className="relative">
+                                  <Input
+                                    {...field}
+                                    type={showNewPassword ? "text" : "password"}
+                                    placeholder="Enter your new password"
+                                    className="pr-10"
+                                  />
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                                    onClick={() =>
+                                      setShowNewPassword(!showNewPassword)
+                                    }
+                                  >
+                                    {showNewPassword ? (
+                                      <EyeOff className="h-4 w-4" />
+                                    ) : (
+                                      <Eye className="h-4 w-4" />
+                                    )}
+                                  </Button>
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={passwordForm.control}
+                          name="confirmPassword"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Confirm New Password</FormLabel>
+                              <FormControl>
+                                <div className="relative">
+                                  <Input
+                                    {...field}
+                                    type={
+                                      showConfirmPassword ? "text" : "password"
+                                    }
+                                    placeholder="Confirm your new password"
+                                    className="pr-10"
+                                  />
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                                    onClick={() =>
+                                      setShowConfirmPassword(
+                                        !showConfirmPassword
+                                      )
+                                    }
+                                  >
+                                    {showConfirmPassword ? (
+                                      <EyeOff className="h-4 w-4" />
+                                    ) : (
+                                      <Eye className="h-4 w-4" />
+                                    )}
+                                  </Button>
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <DialogFooter>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => {
+                            setShowPasswordDialog(false);
+                            passwordForm.reset();
+                          }}
+                          disabled={isSubmitting}
+                        >
+                          Cancel
+                        </Button>
+                        <Button type="submit" disabled={isSubmitting}>
+                          {isSubmitting ? (
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          ) : null}
+                          Change Password
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  </Form>
+                </DialogContent>
+              </Dialog>
 
               <Card className="border-destructive overflow-hidden">
                 <CardHeader className="border-b border-destructive">
@@ -740,13 +848,41 @@ export default function SettingsPage() {
                             information.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
+                        <div className="my-4">
+                          <label
+                            htmlFor="delete-confirm"
+                            className="block text-sm font-medium mb-2"
+                          >
+                            Please type{" "}
+                            <span className="font-mono bg-muted px-1 rounded">
+                              {userEmail}
+                            </span>{" "}
+                            to confirm:
+                          </label>
+                          <Input
+                            id="delete-confirm"
+                            value={deleteConfirm}
+                            onChange={(e) => setDeleteConfirm(e.target.value)}
+                            disabled={isSubmitting}
+                            autoFocus
+                            className="w-full"
+                            placeholder={userEmail}
+                          />
+                          {deleteConfirm && deleteConfirm !== userEmail && (
+                            <div className="text-xs text-destructive mt-1">
+                              Email does not match.
+                            </div>
+                          )}
+                        </div>
                         <AlertDialogFooter>
                           <AlertDialogCancel disabled={isSubmitting}>
                             Cancel
                           </AlertDialogCancel>
                           <AlertDialogAction
                             onClick={handleDeleteAccount}
-                            disabled={isSubmitting}
+                            disabled={
+                              isSubmitting || deleteConfirm !== userEmail
+                            }
                             className="bg-destructive hover:bg-destructive/90"
                           >
                             {isSubmitting ? (
@@ -816,7 +952,7 @@ export default function SettingsPage() {
                             }`}
                             onClick={() => setTheme("system")}
                           >
-                            <Globe className="h-5 w-5" />
+                            <Laptop className="h-5 w-5" />
                           </Button>
                         </div>
                       </div>
