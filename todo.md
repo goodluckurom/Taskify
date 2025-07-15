@@ -9,3 +9,16 @@
 
 - [ ] from the tasks page, when you click on the task pool in the page , update the local storage so it works ell for mobile
 - [ ] hide the kanban view for mobile in the tasks page
+- [ ] In the background overlay of alert and dialoag, use the loago to do a nice overlay instead of the default overlay from shadc n
+
+{
+
+first_name:string,
+
+last_name:string,
+
+avartar_url:string
+
+is_onboarded:boolean
+
+}

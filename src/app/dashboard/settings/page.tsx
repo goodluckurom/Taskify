@@ -74,6 +74,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useUser } from "@/context/user-context";
+import { api } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 // Form schemas
 const profileSchema = z.object({
@@ -168,6 +171,9 @@ export default function SettingsPage() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const { logout } = useUser();
+  const router = useRouter();
 
   // Simulate initial loading
   useEffect(() => {
@@ -269,6 +275,17 @@ export default function SettingsPage() {
       setIsSubmitting(false);
     }
   };
+
+  async function handleLogout() {
+    try {
+      await api.post("/users/logout");
+      logout();
+      toast.success("Logged out successfully");
+      router.push("/");
+    } catch {
+      toast.error("Failed to log out. Please try again.");
+    }
+  }
 
   if (isLoading) {
     return <SettingsSkeleton />;
@@ -650,6 +667,32 @@ export default function SettingsPage() {
                     </div>
                   </div>
                 </CardContent>
+                <div className="flex flex-col gap-6 mt-8 px-4">
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" className=" ml-auto">
+                        Log out
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Log out</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Are you sure you want to log out?
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          className="bg-destructive text-white hover:bg-destructive/90"
+                          onClick={handleLogout}
+                        >
+                          Yes, Log out
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
               </Card>
 
               {/* Password Change Dialog */}

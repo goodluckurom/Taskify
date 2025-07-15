@@ -14,11 +14,21 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useDashboard } from "@/context/dashboard-context";
+import { useUser } from "@/context/user-context";
+import { Skeleton } from "@/components/ui/skeleton";
 import Logo from "../logo";
 
 export default function DashboardSidebar() {
   const pathname = usePathname();
   const { sidebarCollapsed, toggleSidebar } = useDashboard();
+  const { user, loading: userLoading } = useUser();
+
+  // Helper to get name from email
+  function getNameFromEmail(email: string) {
+    if (!email) return "";
+    const [name] = email.split("@");
+    return name.charAt(0).toUpperCase() + name.slice(1);
+  }
 
   const mainNavItems = [
     {
@@ -89,26 +99,46 @@ export default function DashboardSidebar() {
           sidebarCollapsed ? "px-2" : "px-3"
         )}
       >
-        {!sidebarCollapsed ? (
+        {userLoading ? (
+          <div
+            className={
+              sidebarCollapsed
+                ? "flex justify-center"
+                : "flex items-center gap-3 p-2"
+            }
+          >
+            <Skeleton className="h-9 w-9 rounded-full" />
+            {!sidebarCollapsed && (
+              <div className="flex flex-col min-w-0 flex-1">
+                <Skeleton className="h-4 w-24 mb-1" />
+                <Skeleton className="h-3 w-32" />
+              </div>
+            )}
+          </div>
+        ) : !sidebarCollapsed ? (
           <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors">
             <Avatar className="h-9 w-9 shrink-0">
-              <AvatarImage src="/placeholder-user.jpg" />
-              <AvatarFallback>PM</AvatarFallback>
+              <AvatarImage src={user?.avatar_url || "/placeholder-user.jpg"} />
+              <AvatarFallback>
+                {getNameFromEmail(user?.email || "").charAt(0) || "U"}
+              </AvatarFallback>
             </Avatar>
             <div className="flex flex-col min-w-0 flex-1">
               <span className="text-sm font-medium leading-none truncate">
-                Project Manager
+                {getNameFromEmail(user?.email || "")}
               </span>
               <span className="text-xs text-muted-foreground truncate">
-                admin@projectify.com
+                {user?.email || ""}
               </span>
             </div>
           </div>
         ) : (
           <div className="flex justify-center">
             <Avatar className="h-9 w-9">
-              <AvatarImage src="/placeholder-user.jpg" />
-              <AvatarFallback>PM</AvatarFallback>
+              <AvatarImage src={user?.avatar_url || "/placeholder-user.jpg"} />
+              <AvatarFallback>
+                {getNameFromEmail(user?.email || "").charAt(0) || "U"}
+              </AvatarFallback>
             </Avatar>
           </div>
         )}

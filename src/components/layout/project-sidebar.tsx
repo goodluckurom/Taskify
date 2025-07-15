@@ -128,9 +128,9 @@ export function ProjectSidebar({ projectId }: { projectId: string }) {
             )}
           >
             {projectSidebarCollapsed ? (
-              <ChevronRight className="h-5 w-5" />
-            ) : (
               <ChevronLeft className="h-5 w-5" />
+            ) : (
+              <ChevronRight className="h-5 w-5" />
             )}
           </span>
         </button>

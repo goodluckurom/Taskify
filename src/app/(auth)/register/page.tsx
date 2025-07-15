@@ -15,11 +15,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
-import axios from "axios";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { api } from "@/lib/utils";
 
 const formSchema = z
   .object({
@@ -43,6 +43,7 @@ export default function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -53,16 +54,24 @@ export default function RegisterForm() {
     },
   });
 
+  // Get email from URL params and pre-fill the form
+  useEffect(() => {
+    const emailFromParams = searchParams.get("email");
+    if (emailFromParams) {
+      form.setValue("email", emailFromParams);
+    }
+  }, [searchParams, form]);
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     setError("");
 
     try {
-      const response = await axios.post("/api/auth/register", values);
-      if (response.data.success) {
+      const response = await api.post("/users/signup", values);
+      if (response.status === 201) {
         router.push(`/verify-otp?email=${values.email}`);
       } else {
-        setError(response.data.message || "Registration failed");
+        setError("Registration failed");
       }
     } catch (err: any) {
       setError(
@@ -199,6 +208,29 @@ export default function RegisterForm() {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
       >
+        By clicking continue, you agree to our{" "}
+        <Link
+          href="#"
+          className="underline underline-offset-4 hover:text-primary"
+        >
+          Terms of Service
+        </Link>{" "}
+        and{" "}
+        <Link
+          href="#"
+          className="underline underline-offset-4 hover:text-primary"
+        >
+          Privacy Policy
+        </Link>
+        .
+      </motion.p>
+
+      <motion.div
+        className="text-center text-sm text-muted-foreground"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4 }}
+      >
         Already have an account?{" "}
         <Link
           href="/login"
@@ -206,7 +238,7 @@ export default function RegisterForm() {
         >
           Sign in
         </Link>
-      </motion.p>
+      </motion.div>
     </motion.div>
   );
 }

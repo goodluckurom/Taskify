@@ -1,7 +1,5 @@
 import Link from "next/link";
-import { Bell, ChevronDown, Plus, Sun, Moon } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useTheme } from "next-themes";
+import { Bell, ChevronDown, Plus } from "lucide-react";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -21,17 +19,6 @@ interface ProjectHeaderProps {
 }
 
 export function ProjectHeader({ project, className }: ProjectHeaderProps) {
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
-  };
-
   return (
     <header
       className={`fixed top-0 left-0 w-full z-40 flex h-16 items-center justify-between border-b border-border/50 bg-white/60 dark:bg-white/5 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 mb-8 ${
@@ -58,22 +45,6 @@ export function ProjectHeader({ project, className }: ProjectHeaderProps) {
           </div>
         </div>
         <div className="ml-auto flex items-center gap-3">
-          {/* Mobile Theme Toggle */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleTheme}
-            className="lg:hidden h-8 w-8 rounded-md hover:bg-muted transition-colors"
-            disabled={!mounted}
-          >
-            {mounted && theme === "dark" ? (
-              <Sun className="h-4 w-4" />
-            ) : (
-              <Moon className="h-4 w-4" />
-            )}
-            <span className="sr-only">Toggle theme</span>
-          </Button>
-
           <Button variant="outline" size="sm" className="hidden gap-1 md:flex">
             <Plus className="h-3.5 w-3.5" />
             Invite

@@ -3,6 +3,10 @@ import { cn } from "@/lib/utils";
 import { Home, CheckCircle, Star } from "lucide-react";
 import { ModeToggle } from "@/components/mode-toggle";
 import Link from "next/link";
+import { useUser } from "@/context/user-context";
+import { useRouter } from "next/navigation";
+import Loading from "@/app/loading";
+import { useEffect } from "react";
 
 export default function AuthLayout({
   children,
@@ -14,6 +18,19 @@ export default function AuthLayout({
     { value: "99.9%", label: "Uptime" },
     { value: "24/7", label: "Support" },
   ];
+
+  const { user, loading } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.replace("/dashboard");
+    }
+  }, [loading, user, router]);
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div

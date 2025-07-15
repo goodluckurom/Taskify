@@ -16,10 +16,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { api } from "@/lib/utils";
+import { useUser } from "@/context/user-context";
 
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -30,7 +31,9 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const router = useRouter();
+  const { setUser } = useUser();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -43,16 +46,35 @@ export default function LoginForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     setError("");
+    setSuccess("");
 
     try {
-      const response = await axios.post("/api/auth/login", values);
-      if (response.data.success) {
+      const response = await api.post("/auth/login", values);
+      if (response.status === 200 && response.data.access_token) {
+        setSuccess("Login successful, Welcome back!");
+        // Store token in localStorage
+        localStorage.setItem("access_token", response.data.access_token);
+        // Fetch user info
+        try {
+          const userRes = await api.get("/users/me");
+          setUser(userRes.data);
+        } catch {
+          setError("Failed to fetch user info");
+          setIsLoading(false);
+          return;
+        }
+        // Navigate to dashboard
         router.push("/dashboard");
       } else {
-        setError(response.data.message || "Login failed");
+        setError(response.data.detail || "Login failed");
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || "An error occurred during login");
+      // Simple 401 handling - wrong credentials
+      if (err.response?.status === 401) {
+        setError("Invalid email or password");
+      } else {
+        setError("An error occurred during login");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -79,6 +101,16 @@ export default function LoginForm() {
           className="p-4 text-sm text-red-600 bg-red-50 rounded-md"
         >
           {error}
+        </motion.div>
+      )}
+
+      {success && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-4 text-sm text-green-600 bg-green-100 rounded-md"
+        >
+          {success}
         </motion.div>
       )}
 

@@ -17,26 +17,37 @@ import {
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
+import { api } from "@/lib/utils";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 
-const formSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  otp: z.string().length(6, "OTP must be 6 digits"),
-  newPassword: z
-    .string()
-    .min(8, "Password must be at least 8 characters long")
-    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-    .regex(/[0-9]/, "Password must contain at least one number"),
-});
+const formSchema = z
+  .object({
+    email: z.string().email("Please enter a valid email address"),
+    otp: z.string().length(6, "OTP must be 6 digits"),
+    new_password: z
+      .string()
+      .min(8, "Password must be at least 8 characters long")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+      .regex(/[0-9]/, "Password must contain at least one number"),
+    confirm_password: z.string(),
+  })
+  .refine((data) => data.new_password === data.confirm_password, {
+    message: "Passwords do not match",
+    path: ["confirm_password"],
+  });
 
 export default function ResetPasswordForm() {
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || "";
-  const otp = searchParams.get("otp") || "";
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -47,8 +58,9 @@ export default function ResetPasswordForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: email,
-      otp: otp,
-      newPassword: "",
+      otp: "",
+      new_password: "",
+      confirm_password: "",
     },
   });
 
@@ -58,12 +70,10 @@ export default function ResetPasswordForm() {
     setSuccess("");
 
     try {
-      const response = await axios.post("/api/auth/reset-password", values);
-      if (response.data.success) {
+      const response = await api.post("/reset/confirm", values);
+      if (response.status === 200) {
         setSuccess("Password reset successfully! Redirecting to login...");
-        setTimeout(() => {
-          router.push("/login");
-        }, 2000);
+        router.push("/login");
       } else {
         setError(response.data.message || "Password reset failed");
       }
@@ -104,7 +114,7 @@ export default function ResetPasswordForm() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="p-4 text-sm text-green-600 bg-green-50 rounded-md"
+          className="p-4 text-sm text-green-600 bg-green-100 rounded-md"
         >
           {success}
         </motion.div>
@@ -119,7 +129,7 @@ export default function ResetPasswordForm() {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="your@email.com" {...field} readOnly />
+                  <Input placeholder="your@email.com" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -133,12 +143,21 @@ export default function ResetPasswordForm() {
               <FormItem>
                 <FormLabel>OTP</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="123456"
+                  <InputOTP
                     maxLength={6}
-                    {...field}
-                    readOnly={!!otp}
-                  />
+                    value={field.value}
+                    onChange={field.onChange}
+                  >
+                    <InputOTPGroup>
+                      <InputOTPSlot index={0} className="w-14" />
+                      <InputOTPSlot index={1} className="w-10" />
+                      <InputOTPSlot index={2} className="w-12" />
+                      <InputOTPSeparator />
+                      <InputOTPSlot index={3} className="w-12" />
+                      <InputOTPSlot index={4} className="w-10" />
+                      <InputOTPSlot index={5} className="w-14" />
+                    </InputOTPGroup>
+                  </InputOTP>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -147,10 +166,40 @@ export default function ResetPasswordForm() {
 
           <FormField
             control={form.control}
-            name="newPassword"
+            name="new_password"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>New Password</FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      {...field}
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="confirm_password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Confirm Password</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Input

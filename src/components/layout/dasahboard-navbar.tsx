@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useDashboard } from "@/context/dashboard-context";
+import { useUser } from "@/context/user-context";
 
 // Helper to detect tablet
 function useIsTablet() {
@@ -23,6 +24,7 @@ export default function DashboardNavbar() {
   const { isMobile, sidebarCollapsed } = useDashboard();
   const [time, setTime] = useState(new Date());
   const isTablet = useIsTablet();
+  const { user, loading: userLoading } = useUser();
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -48,7 +50,18 @@ export default function DashboardNavbar() {
     >
       {/* Left Section */}
       <div className="flex flex-col">
-        <span className="text-sm font-medium">{greeting}, David 👋</span>
+        <span className="text-sm font-medium">
+          {userLoading ? (
+            <div className="flex items-center gap-2">
+              <div className="h-4 w-24 animate-pulse rounded bg-muted"></div>
+              <span>👋</span>
+            </div>
+          ) : (
+            <>
+              {greeting}, {user?.email.split("@")[0]} 👋
+            </>
+          )}
+        </span>
         <span className="text-xs text-muted-foreground">{timeString}</span>
       </div>
       {/* Right Section */}
@@ -60,8 +73,19 @@ export default function DashboardNavbar() {
         {/* Mobile & Tablet: Avatar */}
         {(isMobile || isTablet) && (
           <Avatar className="h-8 w-8">
-            <AvatarImage src="/placeholder-user.jpg" alt="User" />
-            <AvatarFallback>PM</AvatarFallback>
+            {userLoading ? (
+              <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
+            ) : (
+              <>
+                <AvatarImage
+                  src={user?.avatar_url || "/placeholder-user.jpg"}
+                  alt={user?.email || "User"}
+                />
+                <AvatarFallback>
+                  {user?.email?.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </>
+            )}
           </Avatar>
         )}
       </div>

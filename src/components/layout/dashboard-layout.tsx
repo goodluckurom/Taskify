@@ -7,6 +7,18 @@ import { useDashboard } from "@/context/dashboard-context";
 import DashboardSidebar from "./dashboard-sidebar";
 import DashboardNavbar from "./dasahboard-navbar";
 import MobileNavigation from "../dashboard/mobile-navigation";
+import { useUser } from "@/context/user-context";
+import { useRouter } from "next/navigation";
+import Loading from "@/app/loading";
+import { useEffect } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 export default function DashboardLayout({
   children,
@@ -15,6 +27,54 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const { sidebarCollapsed, isMobile } = useDashboard();
+  const { user, loading, tokenExpired, setTokenExpired, logout } = useUser();
+  const router = useRouter();
+
+  // Route protection
+  useEffect(() => {
+    if (!loading && !user && !tokenExpired) {
+      router.replace("/login");
+    }
+  }, [loading, user, tokenExpired, router]);
+
+  // Token expiry modal actions
+  function handleLogin() {
+    setTokenExpired(false);
+    logout();
+    router.replace("/login");
+  }
+  function handleHome() {
+    setTokenExpired(false);
+    logout();
+    router.replace("/");
+  }
+
+  // Show loading spinner while checking auth
+  if (loading) {
+    return <Loading />;
+  }
+
+  // Show token expired modal
+  if (tokenExpired) {
+    return (
+      <Dialog open>
+        <DialogContent className="max-w-sm mx-auto">
+          <DialogHeader>
+            <DialogTitle>Session Expired</DialogTitle>
+          </DialogHeader>
+          <div className="py-4 text-center">
+            Your session has expired. Please log in again.
+          </div>
+          <DialogFooter className="flex gap-2 justify-center">
+            <Button onClick={handleLogin}>Login</Button>
+            <Button variant="secondary" onClick={handleHome}>
+              Go to Home
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   // Define the prefix where you don't want the layout
   const hideLayout =

@@ -14,12 +14,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
+import { api } from "@/lib/utils";
 
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -44,12 +44,10 @@ export default function ForgotPasswordForm() {
     setSuccess("");
 
     try {
-      const response = await axios.post("/api/auth/forgot-password", values);
-      if (response.data.success) {
+      const response = await api.post("/reset/request", values);
+      if (response.status === 200) {
         setSuccess("Password reset link sent to your email!");
-        setTimeout(() => {
-          router.push("/login");
-        }, 3000);
+        router.push("/reset-password");
       } else {
         setError(response.data.message || "Failed to send reset link");
       }
