@@ -71,7 +71,7 @@ export default function LandingPage() {
               variant="secondary"
               className="px-4 py-2 text-sm font-medium w-fit mx-auto bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/20 dark:to-purple-900/20 border-blue-200 dark:border-blue-800 backdrop-blur-sm"
             >
-              ✨ Admin-Controlled Workspace
+              ✨ Owner-Controlled Workspace
             </Badge>
 
             <div className="space-y-8">

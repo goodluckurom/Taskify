@@ -1,5 +1,8 @@
 
+change password route:
+    -: route to accept old password and new password for authenticated users to  change their   password
 
 Projec Apis
  -: api to handle uploading of files for a specific project 
+ -:
  
